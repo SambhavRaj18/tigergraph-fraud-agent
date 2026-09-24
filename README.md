@@ -5,57 +5,80 @@
 [![MCP Protocol](https://img.shields.io/badge/Protocol-MCP%20stdio-green.svg)](https://github.com/tigergraph/tigergraph-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **One-Paragraph Pitch:**  
-> The **Autonomous Fraud Investigation Agent** is a production-grade, GraphRAG investigation system that pairs **TigerGraph Savanna Cloud's** native graph analytics with an **Agentic LLM Layer (via Model Context Protocol)** and an authoritative **Deterministic Policy Decision Engine**. Investigating across **590,742 transactions**, **13,553 customers**, and **5,585 closed cases**, the system autonomously gathers multi-hop graph evidence, detects complex fraud syndicates, enforces strict regulatory policies (R1–R10), dynamically calculates multi-day fraud episodes, and generates publication-ready **FinCEN Suspicious Activity Reports (SARs)** with 100% factual provenance.
+> **Project Pitch:**  
+> The **Autonomous Fraud Investigation Agent** is an enterprise-grade fraud investigation system that pairs **TigerGraph Savanna Cloud** with an **Agentic LLM Layer (via Model Context Protocol)** and an authoritative **Deterministic Policy Decision Engine**. Operating over 590k+ transactions and 5.5k+ historical cases, the agent autonomously traverses multi-hop graph subgraphs, evaluates behavioral baselines, detects multi-transaction burst episodes, enforces strict bank policy rules (R1–R10), and synthesizes publication-ready FinCEN Suspicious Activity Reports (SARs) with 100% factual provenance.
 
 ---
 
-## 📊 Key Benchmark Numbers at a Glance
+## 📊 Benchmark at a Glance
 
-| Metric | Measured Value | Verification Method |
+| Benchmark Dimension | Measured Metric | Description / Verification |
 | :--- | :---: | :--- |
-| **Benchmark Cases Solved** | **20 / 20 (100%)** | Validated against official benchmark specification |
+| **Benchmark Cases Evaluated** | **20 / 20** | All 20 exam cases investigated and generated in `cases/*.json` |
 | **Total Graph Transactions** | **590,742** | Native TigerGraph Savanna Cloud vertex storage |
-| **Graph Case Memory** | **5,585 Cases** | 5,565 historical training cases + 20 closed benchmark investigations |
-| **Policy Compliance (R1–R10)**| **100% Strict** | Deterministic Decision Engine approval routing (`auto`, `L1`, `L2`) |
-| **Schema & Provenance Errors**| **0 Errors** | Automated 6-stage referential integrity and provenance audit |
-| **Unit & MCP Regression Suite**| **10 / 10 Passed** | Real TigerGraph MCP server stdio transport verification |
-| **Average Decision Latency** | **< 1.0s / Case** | High-throughput deterministic orchestration & query execution |
+| **Historical Closed Cases** | **5,565** | Historical training investigations (July–October) |
+| **Graph Case-Memory Total** | **5,585** | 5,565 historical + 20 closed benchmark investigations written to graph |
+| **Deliverable Validation Errors** | **0 Errors** | 6-stage schema, provenance, and policy referential integrity audit |
+| **Agent Suite Unit Tests** | **10 / 10 (OK)** | Full test coverage over MCP tools, episode grouping, and policies |
 
 ---
 
 ## 🧠 Why This Is Agentic
 
-Traditional fraud systems rely either on static rule engines that miss multi-hop connections or monolithic black-box LLMs prone to hallucination. Our system is genuinely **agentic**:
+Rather than running a monolithic script or relying on an unconstrained LLM, the investigation executes as an **autonomous, stateful loop**:
 
-1. **Autonomous Tool Selection via MCP**: The LLM iteratively reasons over the investigation state and selects specialized graph tools via the **Model Context Protocol (MCP)** using `stdio` transport.
-2. **Multi-Hop GraphRAG Traversal**: Rather than ingesting raw text, the agent issues dynamic graph queries into TigerGraph to retrieve customer baselines, device syndicates, and temporal `NEXT` transaction sequences.
-3. **Stateful Graph Memory**: Closed cases are immediately written back into TigerGraph (`ClosedCase` vertices and `INVOLVES`/`ON_CARD` incident edges), enabling the agent to cite precedent cases in future investigations.
-4. **Out-of-Band Evidence Queuing**: When evidence is ambiguous, the agent queues structured customer validation requests without blocking or fabricating customer replies.
-5. **Separation of Reasoning & Enforcement**: The LLM handles tool selection, evidence synthesis, and FinCEN narrative writing, while the **Deterministic Policy Engine** retains final, immutable authority over verdicts and actions.
+```
+Case Trigger (risk score, customer dispute, analyst request)
+   ↓
+Agentic LLM Layer (reasons over investigation state)
+   ↓
+Tool Selection (selects next best tool via MCP stdio transport)
+   ↓
+TigerGraph Evidence Retrieval (executes multi-hop GSQL query for transaction neighborhood)
+   ↓
+Evidence Analysis (computes customer baseline statistics, Z-scores, and burst episodes)
+   ↓
+Historical Case Retrieval (retrieves precedent cases from 5,565 closed cases in graph)
+   ↓
+Policy Retrieval & Evaluation (evaluates deterministic rules R1–R10 against evidence)
+   ↓
+Need More Evidence?
+   ├── YES → Queue out-of-band validation → re-evaluate
+   └── NO  → Stop Decision (signals termination with stop rationale)
+                    ↓
+             Policy Decision Engine (authoritative actions + approval routes)
+                    ↓
+             FinCEN SAR Generation (when required by policy thresholds)
+                    ↓
+             Graph Case-Memory Write (persists ClosedCase vertex & incident edges)
+```
 
 ---
 
-## ⚖️ Division of Responsibilities: LLM vs. TigerGraph vs. Policy Engine
+## ⚖️ System Responsibilities Matrix
 
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                SYSTEM RESPONSIBILITY MATRIX                            │
-├─────────────────────────┬───────────────────────────────┬──────────────────────────────┤
-│    TigerGraph Savanna   │        Agentic LLM Layer      │   Policy Decision Engine     │
-│   (The Graph Database)  │        (The Investigator)     │       (The Authority)        │
-├─────────────────────────┼───────────────────────────────┼──────────────────────────────┤
-│ • 590k+ Transaction Hub │ • Iterative Tool Selection    │ • Strict Rules R1 to R10     │
-│ • Multi-Hop Traversal   │ • Hypothesis Evaluation       │ • Action Approval Routing    │
-│ • Temporal NEXT Bursts  │ • Multi-Hop Evidence Synthesis│ • SAR Threshold Enforcement  │
-│ • Device/Region Sharing │ • Graph Precedent Reasoning   │ • Immutable Action Ordering  │
-│ • 5,585 Case Vertices   │ • FinCEN SAR Narrative Gen    │ • Factual Provenance Guard   │
-└─────────────────────────┴───────────────────────────────┴──────────────────────────────┘
-```
+Clear separation of concerns guarantees explainability, compliance, and zero hallucinated policy actions:
+
+| Component | Core Responsibility |
+| :--- | :--- |
+| **TigerGraph Savanna Cloud** | **Graph Evidence & Retrieval**: Stores 590k+ transactions, 13k+ customers, 5.5k+ cases, and executes multi-hop neighborhood queries and `NEXT` temporal edge traversals. |
+| **Model Context Protocol (MCP)** | **Standardized Tool Interface**: Exposes graph investigation, evidence analysis, case retrieval, and policy tools over standard `stdio` transport. |
+| **Agentic LLM Layer** | **Reasoning & Tool Selection**: Dynamically selects tools based on case context, evaluates hypotheses, and synthesizes executive summaries and FinCEN SAR narratives. |
+| **Policy Decision Engine** | **Deterministic Policy Enforcement**: Authority over verdicts, approval routes (`auto`, `L1`, `L2`), SAR thresholds, and Rules R1–R10. Never bypassed. |
+| **Graph Case Memory** | **Persistent Knowledge Record**: Upserts closed investigations back into TigerGraph (`ClosedCase` vertices and `INVOLVES`/`ON_CARD` edges) to serve as precedent for future cases. |
 
 ---
 
-## 🏗️ System Architecture
+## 🎥 Demo Video
+
+*(Placeholder for 3–5 minute final walkthrough video demonstrating live MCP tool execution, TigerGraph multi-hop neighborhood traversal, and automated FinCEN SAR generation)*
+
+- **CLI Trace Inspection**: Run `python -m src.agent.run_case --case_id HHG-006` to observe real-time tool selection, graph query responses, and policy evaluation.
+- **TigerGraph GraphStudio**: Open the `FraudInvestigation` graph on Savanna Cloud to visually inspect cardholder transaction subgraphs and incident links.
+
+---
+
+## 🏗️ Technical Architecture
 
 ```
                           ┌───────────────────────────┐
@@ -105,8 +128,6 @@ Traditional fraud systems rely either on static rule engines that miss multi-hop
 
 ## 📋 20-Case Benchmark Deliverables Summary
 
-Below is the verified summary of all 20 official benchmark investigation deliverables:
-
 | Case ID | Trigger | Verdict | Pattern | Prob | Exposure ($) | SAR Filed | Activity Dates | Primary Policy Actions |
 | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
 | **HHG-001** | `risk_score` | `legitimate` | `none` | 0.12 | \$0.00 | NO | - | `ALLOW_TRANSACTION -> CLOSE_NO_FRAUD` |
@@ -132,51 +153,45 @@ Below is the verified summary of all 20 official benchmark investigation deliver
 
 ---
 
-## ⚡ Quick Start (Developer Path < 3 Minutes)
+## ⚡ Quick Start & Reproducibility
 
-### 1. Clone & Install Dependencies
+### 1. Installation & Environment Setup
+Clone repository and install minimal dependencies from [`requirements.txt`](file:///d:/HHHGOA/tigergraph-fraud-agent/requirements.txt):
 ```bash
 git clone https://github.com/SambhavRaj18/tigergraph-fraud-agent.git
 cd tigergraph-fraud-agent
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
+Configure credentials from template (see [`.env.example`](file:///d:/HHHGOA/tigergraph-fraud-agent/.env.example)):
 ```bash
 cp .env.example .env
-# Edit .env with your TigerGraph Savanna Cloud credentials
+# Fill in TG_HOST, TG_SECRET, TG_TOKEN, and optional LLM API keys
 ```
 
-### 3. Run Validation Suite (6-Stage Integrity Check)
+### 2. Run Comprehensive 6-Stage Validation
+Verify all 20 deliverable JSON files against schema, provenance, policy alignment, and referential integrity:
 ```bash
 python -m src.benchmark.validate_final_deliverables
 ```
 
-### 4. Run Unit Test Suite
+### 3. Run Agent Unit Test Suite
+Execute unit tests for tool queuing, policy boundaries, and case episode handling:
 ```bash
 python -m unittest src.agent.test_agent_suite
 ```
 
-### 5. Run MCP Regression Suite
+### 4. Run MCP Regression Suite
+Verify real TigerGraph MCP client execution over `stdio` transport:
 ```bash
 python -m src.benchmark.regression_test
 ```
 
----
-
-## 🔬 Reproducibility & Validation
-
-To reproduce all 20 benchmark deliverables from scratch:
-
+### 5. Reproduce All 20 Cases
+Regenerate all 20 benchmark case JSON deliverables from scratch:
 ```bash
-# Execute batch investigation across all 20 cases and regenerate cases/*.json
 python -m src.benchmark.run_benchmark
 ```
-
-### Verification Checklist:
-- ✅ **Schema Compliance**: All 20 JSONs adhere strictly to the schema specification.
-- ✅ **Dynamic Date Spans**: Multi-day episodes (HHG-004, HHG-008) span exact dates (`["2016-12-28", "2016-12-30"]`, `["2016-12-18", "2016-12-20"]`).
-- ✅ **Graph Memory Integrity**: Exactly **5,585** `ClosedCase` vertices present in TigerGraph Savanna Cloud.
 
 ---
 
@@ -184,68 +199,60 @@ python -m src.benchmark.run_benchmark
 
 ```text
 tigergraph-fraud-agent/
-├── .env.example                    # Sanitized environment configuration template
-├── .gitignore                      # Security & dataset ignore rules (protects credentials)
-├── README.md                       # Comprehensive architecture & benchmark guide
-├── requirements.txt                # Production dependency manifest
-├── cases/                          # 20 Official Benchmark JSON Deliverables
+├── .env.example                          # Sanitized environment configuration template
+├── .gitignore                            # Secret & large-dataset protection rules
+├── README.md                             # Architectural, benchmark & reproducibility guide
+├── requirements.txt                      # Minimal production dependency manifest
+├── cases/                                # 20 Official Benchmark JSON Deliverables
 │   ├── HHG-001.json
 │   ├── ...
 │   └── HHG-020.json
 ├── data/
 │   └── raw/
-│       ├── README.md               # Official task specification & policy definitions
-│       └── case_pack.csv           # 20 Benchmark alert triggers
+│       ├── README.md                     # Official task specification & policy definitions
+│       └── case_pack.csv                 # 20 Benchmark alert triggers
 ├── docs/
-│   └── AGENT_ARCHITECTURE.md       # GraphRAG & Multi-Hop Reasoning design
+│   └── AGENT_ARCHITECTURE.md             # GraphRAG & Multi-Hop Reasoning design
 ├── graph/
 │   ├── schema/
-│   │   ├── schema.gsql             # TigerGraph GSQL Schema Definition
-│   │   └── deploy_schema.py        # Schema deployment utility
+│   │   ├── schema.gsql                   # Formal TigerGraph GSQL Schema Definition
+│   │   └── deploy_schema.py              # Schema deployment script
 │   ├── queries/
-│   │   └── investigate_transaction.gsql # Installed multi-hop investigation query
-│   └── loading/                    # Graph preprocessing & verification scripts
+│   │   ├── investigate_transaction.gsql  # Installed multi-hop investigation query
+│   │   └── run_investigation.py          # Query execution helper
+│   └── loading/                          # Graph preprocessing & loading pipeline
 └── src/
-    ├── graph_client.py             # TigerGraph Savanna Cloud REST++ Client
+    ├── graph_client.py                   # TigerGraph Savanna Cloud REST++ Client
     ├── agent/
-    │   ├── investigation_agent.py  # Agentic investigation orchestrator
-    │   ├── llm_provider.py         # Multi-provider LLM abstraction (Gemini/OpenAI/Det)
-    │   ├── tools.py                # Agent investigation tools
-    │   └── test_agent_suite.py     # Unit test suite
+    │   ├── investigation_agent.py        # Agentic investigation orchestrator
+    │   ├── llm_provider.py               # Multi-provider LLM abstraction (Gemini/OpenAI/Det)
+    │   ├── tools.py                      # Agent investigation tools
+    │   └── test_agent_suite.py           # Unit test suite
     ├── mcp/
-    │   ├── server.py               # TigerGraph Model Context Protocol (MCP) server
-    │   ├── client.py               # MCP stdio client
-    │   └── test_mcp.py             # MCP protocol test suite
+    │   ├── server.py                     # TigerGraph Model Context Protocol (MCP) server
+    │   ├── client.py                     # MCP stdio transport client
+    │   └── test_mcp.py                   # MCP protocol test suite
     ├── analysis/
-    │   └── evidence_analyzer.py    # Baseline stats, Z-scores & episode analyzer
+    │   └── evidence_analyzer.py          # Baseline stats, Z-scores & episode analyzer
     ├── policy/
-    │   └── decision_engine.py      # Deterministic Policy Engine (Rules R1–R10)
+    │   └── decision_engine.py            # Deterministic Policy Engine (Rules R1–R10)
     └── benchmark/
-        ├── run_benchmark.py        # Batch benchmark runner
+        ├── run_benchmark.py              # Batch benchmark runner
         ├── validate_final_deliverables.py # 6-stage validation suite
-        ├── audit_provenance.py     # Factual provenance auditor
-        └── regression_test.py      # MCP regression test runner
+        ├── audit_provenance.py           # Factual provenance auditor
+        └── regression_test.py            # MCP regression test runner
 ```
 
 ---
 
 ## ⚠️ Limitations & Factual Assumptions
 
-1. **Dataset Provenance**: The dataset is derived from the IEEE-CIS Fraud Detection dataset (Vesta Corporation) augmented with customer baselines and calendar events.
-2. **Customer & Analyst Responses**: The raw dataset contains no live customer replies or dispute interactions. Under Rule R1, when an investigation requires customer validation, the assumed response is strictly labeled as `SIMULATED / ASSUMED (not in dataset)`. The system never fabricates unobserved customer statements as observed facts.
-3. **Feature Provenance**: Encoded Vesta features ($V, C, D, M$) and identity fields ($id\_01$ to $id\_38$) are treated strictly as anonymized statistical signals without pretending to know unpublished proprietary definitions.
+1. **Dataset Provenance**: The underlying dataset is derived from the IEEE-CIS Fraud Detection benchmark (Vesta Corporation) augmented with customers, calendar timestamps, channels, and bank detection risk scores.
+2. **Factual Customer Provenance**: The raw dataset contains no live customer replies or dispute interactions. Under Policy Rule R1, when an investigation requires customer validation, the assumed response is strictly labeled as `SIMULATED / ASSUMED (not in dataset)`. The agent never asserts simulated statements as observed facts.
+3. **Proprietary Features**: Engineered Vesta columns ($V, C, D, M$) and identity codes ($id\_01$ to $id\_38$) are treated strictly as anonymized statistical signals without pretending to know unpublished proprietary definitions.
 
 ---
 
-## 🎥 Demo & Walkthrough
-
-*(Demo video walkthrough and interactive console trace placeholder)*
-
-- **CLI Trace**: Run `python -m src.agent.run_case --case_id HHG-006` to inspect real-time tool selection, graph queries, and SAR synthesis.
-- **Savanna Graph Visualizer**: Open TigerGraph GraphStudio on the `FraudInvestigation` graph to inspect multi-hop cardholder clusters and incident edges.
-
----
-
-## 📜 License & Acknowledgments
+## 📜 License
 
 This project is licensed under the MIT License. Built for the **TigerGraph × Hacker House Goa 2026** Fraud Investigation Challenge.
