@@ -43,11 +43,11 @@
       }
     ],
     "similar_prior_cases": [
-      "CC-3216",
-      "HHG-013",
-      "CC-4294",
       "CC-1475",
-      "CC-3761"
+      "HHG-013",
+      "CC-3216",
+      "CC-3761",
+      "CC-4294"
     ],
     "summary": "Alert for transaction 3526826 ($35.66) on customer C07671 evaluated as legitimate (fraud probability 0.12). Billing region  is an established region in the cardholder's history with 0 prior visits. Spending amount is consistent with normal baseline. Recommended to allow transaction and close alert without card disruption.",
     "written_to_graph": true,
@@ -92,5 +92,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.88
+  "latency_s": 1.42
 }

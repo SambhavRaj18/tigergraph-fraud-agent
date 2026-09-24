@@ -45,8 +45,8 @@
       }
     ],
     "similar_prior_cases": [
-      "HHG-010",
-      "CC-0873"
+      "CC-0873",
+      "HHG-010"
     ],
     "summary": "Investigation for transaction 3506725 ($1000.03) on customer C10434 identified pattern card_not_present_new_device with fraud probability 0.92. Total exposure is $1,000.03. Card blocked under policy guidelines and internal case logged.",
     "written_to_graph": true,
@@ -78,7 +78,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 11 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 15 other cardholders placed under monitoring."
       }
     ],
     "final": [
@@ -105,7 +105,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 11 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 15 other cardholders placed under monitoring."
       }
     ],
     "what_changed": "nothing"
@@ -127,5 +127,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.51
+  "latency_s": 0.58
 }

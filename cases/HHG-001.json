@@ -42,10 +42,10 @@
     ],
     "similar_prior_cases": [
       "CC-1673",
-      "HHG-001",
-      "CC-3587",
       "CC-2964",
-      "CC-1066"
+      "CC-1066",
+      "CC-3587",
+      "HHG-001"
     ],
     "summary": "Alert for transaction 3514030 ($77.07) on customer C12382 evaluated as legitimate (fraud probability 0.12). Billing region 444 is an established region in the cardholder's history with 15 prior visits. Spending amount is consistent with normal baseline. Recommended to allow transaction and close alert without card disruption.",
     "written_to_graph": true,
@@ -90,5 +90,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.9
+  "latency_s": 0.93
 }

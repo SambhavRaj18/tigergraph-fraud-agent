@@ -86,7 +86,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 40 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 46 other cardholders placed under monitoring."
       }
     ],
     "final": [
@@ -113,7 +113,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 40 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 46 other cardholders placed under monitoring."
       }
     ],
     "what_changed": "nothing"
@@ -135,5 +135,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.7
+  "latency_s": 0.68
 }

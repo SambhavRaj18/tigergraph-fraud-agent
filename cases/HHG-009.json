@@ -104,5 +104,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.95
+  "latency_s": 0.91
 }

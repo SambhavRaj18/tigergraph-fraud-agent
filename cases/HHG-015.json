@@ -45,10 +45,10 @@
       }
     ],
     "similar_prior_cases": [
-      "CC-3886",
-      "HHG-015",
+      "CC-1313",
       "CC-0615",
-      "CC-1313"
+      "HHG-015",
+      "CC-3886"
     ],
     "summary": "Investigation for transaction 3464869 ($599.94) on customer C03042 identified pattern card_not_present_new_device with fraud probability 0.92. Total exposure is $599.94. Card blocked under policy guidelines and internal case logged.",
     "written_to_graph": true,
@@ -129,5 +129,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.99
+  "latency_s": 0.57
 }

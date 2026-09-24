@@ -43,27 +43,27 @@
       }
     ],
     "similar_prior_cases": [
-      "CC-0631",
-      "CC-2187",
-      "CC-5558",
-      "CC-2432",
-      "CC-3634",
-      "CC-4942",
-      "HHG-018",
       "CC-2589",
-      "CC-3537",
-      "CC-0405",
       "CC-4070",
-      "CC-0454",
+      "CC-0405",
+      "CC-3537",
       "CC-0255",
+      "CC-4436",
       "CC-4721",
       "CC-3899",
-      "CC-1699",
-      "CC-3085",
+      "CC-0631",
+      "CC-2187",
+      "CC-3634",
+      "CC-2432",
+      "CC-0454",
+      "CC-5558",
+      "CC-4942",
+      "HHG-018",
+      "CC-2051",
       "CC-1450",
       "CC-5441",
-      "CC-4436",
-      "CC-2051"
+      "CC-3085",
+      "CC-1699"
     ],
     "summary": "Investigation for transaction 3491361 ($39.08) on customer C02354 identified pattern out_of_region_use with fraud probability 0.85. Total exposure is $39.08. Card blocked under policy guidelines and internal case logged.",
     "written_to_graph": true,
@@ -124,5 +124,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 4.86
+  "latency_s": 1.54
 }

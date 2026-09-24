@@ -52,18 +52,17 @@
       }
     ],
     "similar_prior_cases": [
-      "CC-4819",
       "CC-3728",
-      "CC-3928",
-      "HHG-008",
-      "CC-1925",
-      "CC-0056",
+      "CC-4819",
       "CC-1715",
+      "CC-2244",
+      "CC-3422",
+      "CC-0056",
       "CC-2454",
       "CC-1293",
       "CC-3079",
-      "CC-2244",
-      "CC-3422",
+      "HHG-008",
+      "CC-1925",
       "CC-5010",
       "CC-4485",
       "CC-4163",
@@ -71,7 +70,8 @@
       "CC-2059",
       "CC-0467",
       "CC-3566",
-      "CC-2716"
+      "CC-2716",
+      "CC-3928"
     ],
     "summary": "Investigation for transaction 3558054 ($55.68) on customer C13171 identified pattern card_not_present_new_device with fraud probability 0.88. Total exposure is $284.65. Card blocked under policy guidelines and internal case logged.",
     "written_to_graph": true,
@@ -109,7 +109,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 26 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 36 other cardholders placed under monitoring."
       }
     ],
     "final": [
@@ -136,7 +136,7 @@
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "Policy R6: Unusual device profile shared across 26 other cardholders placed under monitoring."
+        "reason": "Policy R6: Unusual device profile shared across 36 other cardholders placed under monitoring."
       }
     ],
     "what_changed": "nothing"
@@ -158,5 +158,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.78
+  "latency_s": 0.87
 }

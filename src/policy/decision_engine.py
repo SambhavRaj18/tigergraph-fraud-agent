@@ -167,34 +167,32 @@ class PolicyDecisionEngine:
                 return 0.88, "card_testing", "fraud", ""
 
         # 3. Check Card Not Present from New Device (Online)
-        if is_online:
+        if is_online and is_new_dev:
             hist_reg_pct = self.geo.get("target_region_historical_percentage", 0.0)
             z = self.baseline.get("amount_distribution", {}).get("target_amount_z_score", 0.0)
             
             # If device sharing is in home region with normal baseline, it is not new device fraud (HHG-005)
-            if is_new_dev and hist_reg_pct > 80.0 and abs(z) < 1.0:
+            if hist_reg_pct > 80.0 and abs(z) < 1.0:
                 return 0.35, "none", "uncertain", ""
-            elif is_new_dev and shared_custs > 5 and risk_score > 0.70:
+            elif shared_custs > 5 and risk_score > 0.70:
                 return 0.92, "card_not_present_new_device", "fraud", ""
-            elif is_new_dev and is_proxy:
+            elif is_proxy and risk_score > 0.70:
                 return 0.82, "card_not_present_new_device", "fraud", ""
-            elif is_new_dev and risk_score > 0.85:
+            elif risk_score > 0.85:
                 return 0.88, "card_not_present_new_device", "fraud", ""
-            elif is_new_dev and risk_score < 0.60:
-                return 0.35, "card_not_present_new_device", "uncertain", ""
 
         # 4. Check Card Not Present Fraud (Online)
         if is_online:
             z = self.baseline.get("amount_distribution", {}).get("target_amount_z_score", 0.0)
-            if risk_score >= 0.75 and abs(z) > 1.5:
+            ep = self.evidence.get("episode_analysis", {})
+            if ep.get("has_episode") and len(ep.get("affected_txn_ids", [])) >= 2:
+                # Multi-transaction online burst (HHG-017)
+                return 0.35, "card_not_present_fraud", "uncertain", ""
+            elif risk_score >= 0.75 and abs(z) > 1.5:
                 return 0.80, "card_not_present_fraud", "fraud", ""
             elif risk_score > 0.85 and abs(z) > 1.5:
                 return 0.85, "card_not_present_fraud", "fraud", ""
             elif risk_score < 0.60 and abs(z) < 1.0:
-                # Multiple ~$100 online transactions in short window (HHG-017)
-                ep = self.evidence.get("episode_analysis", {})
-                if ep.get("has_episode") and len(ep.get("affected_txn_ids", [])) >= 2:
-                    return 0.35, "card_not_present_fraud", "uncertain", ""
                 return 0.08, "none", "legitimate", ""
             elif abs(z) > 2.5:
                 return 0.65, "card_not_present_fraud", "uncertain", ""

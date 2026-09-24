@@ -54,18 +54,18 @@
       }
     ],
     "similar_prior_cases": [
-      "HHG-011",
       "CC-0031",
       "CC-2799",
       "CC-0290",
       "CC-3206",
       "CC-2247",
+      "CC-2673",
+      "HHG-011",
+      "CC-3905",
       "CC-3039",
       "CC-4743",
       "CC-4501",
-      "CC-1056",
-      "CC-3905",
-      "CC-2673"
+      "CC-1056"
     ],
     "summary": "Investigation for transaction 3583368 ($131.30) on customer C11923 identified pattern card_not_present_new_device with fraud probability 0.88. Total exposure is $470.97. Card blocked under policy guidelines and internal case logged.",
     "written_to_graph": true,
@@ -152,5 +152,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 2.3
+  "latency_s": 1.95
 }

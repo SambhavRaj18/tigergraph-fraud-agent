@@ -44,8 +44,8 @@
     ],
     "similar_prior_cases": [
       "HHG-005",
-      "CC-2857",
       "CC-2717",
+      "CC-2857",
       "CC-2400"
     ],
     "summary": "Investigation for transaction 3523199 ($100.07) on customer C02923 identified pattern none with fraud probability 0.35. Total exposure is $0.00. Card blocked under policy guidelines and internal case logged.",
@@ -97,5 +97,5 @@
   "stop_reason": "sufficient_evidence",
   "tool_calls": 6,
   "tokens": 0,
-  "latency_s": 0.59
+  "latency_s": 0.56
 }
