@@ -1,0 +1,178 @@
+USE GRAPH FraudInvestigation
+
+DROP JOB load_fraud_data
+
+CREATE LOADING JOB load_fraud_data FOR GRAPH FraudInvestigation {
+    // ---------------------------------------------------------
+    // Define File Paths for Vertices
+    // ---------------------------------------------------------
+    DEFINE FILENAME file_customer;
+    DEFINE FILENAME file_card;
+    DEFINE FILENAME file_transaction;
+    DEFINE FILENAME file_device_profile;
+    DEFINE FILENAME file_email_domain;
+    DEFINE FILENAME file_billing_region;
+    DEFINE FILENAME file_closed_case;
+
+    // ---------------------------------------------------------
+    // Define File Paths for Explicit Edge Tables
+    // ---------------------------------------------------------
+    DEFINE FILENAME file_edge_owns;
+    DEFINE FILENAME file_edge_made;
+    DEFINE FILENAME file_edge_from_device;
+    DEFINE FILENAME file_edge_purchaser_email;
+    DEFINE FILENAME file_edge_billed_in;
+    DEFINE FILENAME file_edge_involves;
+    DEFINE FILENAME file_edge_on_card;
+    DEFINE FILENAME file_edge_connected_to;
+    DEFINE FILENAME file_edge_next;
+
+    // =========================================================
+    // 1. VERTEX LOADERS (All 7 Deployed Vertices)
+    // =========================================================
+
+    // Customer Vertex: PRIMARY_ID customer_id
+    LOAD file_customer TO VERTEX Customer VALUES (
+        $0
+    ) USING header="true", separator=",";
+
+    // Card Vertex: PRIMARY_ID card_id, customer_id, card_type
+    LOAD file_card TO VERTEX Card VALUES (
+        $0,
+        $1,
+        $2
+    ) USING header="true", separator=",";
+
+    // Transaction Vertex: PRIMARY_ID transaction_id, customer_id, card_id, transaction_amt, transaction_dt, ts, product_cd, channel, risk_score, addr1, addr2, p_email_domain, r_email_domain
+    LOAD file_transaction TO VERTEX Transaction VALUES (
+        $0,
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+        $11,
+        $12
+    ) USING header="true", separator=",";
+
+    // DeviceProfile Vertex: PRIMARY_ID device_id, device_info, device_type, os, browser, screen, match_status, is_new, is_proxy
+    LOAD file_device_profile TO VERTEX DeviceProfile VALUES (
+        $0,
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8
+    ) USING header="true", separator=",";
+
+    // EmailDomain Vertex: PRIMARY_ID domain
+    LOAD file_email_domain TO VERTEX EmailDomain VALUES (
+        $0
+    ) USING header="true", separator=",";
+
+    // BillingRegion Vertex: PRIMARY_ID region_id, country_code
+    LOAD file_billing_region TO VERTEX BillingRegion VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // ClosedCase Vertex: PRIMARY_ID case_id, customer_id, card_id, opened_at, closed_at, status, outcome, pattern, first_fraud_txn_id, n_txns, exposure_usd, actions_taken, report_filed, analyst_notes
+    LOAD file_closed_case TO VERTEX ClosedCase VALUES (
+        $0,
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+        $11,
+        $12,
+        $13
+    ) USING header="true", separator=",", QUOTE="double";
+
+    // =========================================================
+    // 2. EDGE LOADERS (All 11 Primary Edges + Engine-Managed Reverse Edges)
+    // =========================================================
+
+    // 1. Customer -> Card (OWNS)
+    LOAD file_edge_owns TO EDGE OWNS VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 2. Card -> Transaction (MADE)
+    LOAD file_edge_made TO EDGE MADE VALUES (
+        $0,
+        $1
+    ) WHERE $0 != ""
+    USING header="true", separator=",";
+
+    // 3. Transaction -> DeviceProfile (FROM_DEVICE)
+    LOAD file_edge_from_device TO EDGE FROM_DEVICE VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 4. Transaction -> EmailDomain (PURCHASER_EMAIL)
+    LOAD file_edge_purchaser_email TO EDGE PURCHASER_EMAIL VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 5. Transaction -> EmailDomain (RECIPIENT_EMAIL)
+    LOAD file_transaction TO EDGE RECIPIENT_EMAIL VALUES (
+        $0,
+        $12
+    ) WHERE $12 != ""
+    USING header="true", separator=",";
+
+    // 6. Transaction -> BillingRegion (BILLED_IN)
+    LOAD file_edge_billed_in TO EDGE BILLED_IN VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 7. Customer -> Transaction (PERFORMED)
+    LOAD file_transaction TO EDGE PERFORMED VALUES (
+        $1,
+        $0
+    ) WHERE $1 != ""
+    USING header="true", separator=",";
+
+    // 8. ClosedCase -> Transaction (INVOLVES)
+    LOAD file_edge_involves TO EDGE INVOLVES VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 9. ClosedCase -> Card (ON_CARD)
+    LOAD file_edge_on_card TO EDGE ON_CARD VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 10. ClosedCase -> Card (CONNECTED_TO)
+    LOAD file_edge_connected_to TO EDGE CONNECTED_TO VALUES (
+        $0,
+        $1
+    ) USING header="true", separator=",";
+
+    // 11. Transaction -> Transaction (NEXT)
+    LOAD file_edge_next TO EDGE NEXT VALUES (
+        $0,
+        $1,
+        $2
+    ) USING header="true", separator=",";
+}

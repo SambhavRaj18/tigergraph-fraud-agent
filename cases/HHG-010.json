@@ -1,0 +1,131 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.92,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3506725"
+    ],
+    "first_suspicious_txn_id": "3506725",
+    "connected_card_ids": [
+      "C10434-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "exposure_usd": 1000.03,
+    "evidence": [
+      {
+        "claim": "Transaction 3506725 occurred on 2016-12-02 15:18:27 for $1000.03 via online channel in billing region 469.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3506725)",
+        "entity_ids": [
+          "3506725",
+          "469"
+        ]
+      },
+      {
+        "claim": "Customer C10434 has 36 lifetime transactions with average spend of $153.87. Target amount $1000.03 is within normal spending baseline (z-score 3.84).",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3506725)",
+        "entity_ids": [
+          "C10434"
+        ]
+      },
+      {
+        "claim": "Billing region 469 has 27 prior visits (75.0% of history) in customer's profile.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3506725)",
+        "entity_ids": [
+          "469"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "HHG-010",
+      "CC-0873"
+    ],
+    "summary": "Investigation for transaction 3506725 ($1000.03) on customer C10434 identified pattern card_not_present_new_device with fraud probability 0.92. Total exposure is $1,000.03. Card blocked under policy guidelines and internal case logged.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-010"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern card_not_present_new_device; exposure $1,000.03 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Policy 3a: Regulatory SAR filing required due to exposure > $1,000 or shared device ring."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "Policy R6: Unusual device profile shared across 11 other cardholders placed under monitoring."
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern card_not_present_new_device; exposure $1,000.03 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Policy 3a: Regulatory SAR filing required due to exposure > $1,000 or shared device ring."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "Policy R6: Unusual device profile shared across 11 other cardholders placed under monitoring."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "Policy 3a & R2: Confirmed fraud with regulatory reporting trigger.",
+    "narrative": "On 2016-12-02, card C10434-K1 belonging to customer C10434 was used for an unauthorized online transaction totaling $1,000.03 in billing region 469. The activity was inconsistent with the cardholder's historical profile. Pattern matches card_not_present_new_device. Total unauthorized exposure: $1,000.03. Card was blocked and internal case logged.",
+    "subjects": [
+      "C10434",
+      "C10434-K1"
+    ],
+    "total_amount_usd": 1000.03,
+    "activity_dates": [
+      "2016-12-02",
+      "2016-12-02"
+    ]
+  },
+  "stop_reason": "sufficient_evidence",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.51
+}

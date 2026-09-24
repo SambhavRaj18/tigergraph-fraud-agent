@@ -1,0 +1,94 @@
+{
+  "case_id": "HHG-001",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.12,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [
+      "C12382-K1"
+    ],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Transaction 3514030 occurred on 2016-12-04 19:55:28 for $77.07 via in_person channel in billing region 444.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3514030)",
+        "entity_ids": [
+          "3514030",
+          "444"
+        ]
+      },
+      {
+        "claim": "Customer C12382 has 422 lifetime transactions with average spend of $115.60. Target amount $77.07 is within normal spending baseline (z-score -0.33).",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3514030)",
+        "entity_ids": [
+          "C12382"
+        ]
+      },
+      {
+        "claim": "Billing region 444 has 15 prior visits (3.5% of history) in customer's profile.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3514030)",
+        "entity_ids": [
+          "444"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1673",
+      "HHG-001",
+      "CC-3587",
+      "CC-2964",
+      "CC-1066"
+    ],
+    "summary": "Alert for transaction 3514030 ($77.07) on customer C12382 evaluated as legitimate (fraud probability 0.12). Billing region 444 is an established region in the cardholder's history with 15 prior visits. Spending amount is consistent with normal baseline. Recommended to allow transaction and close alert without card disruption.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-001"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Policy 1 & Section 6: Evidence confirms consistent customer baseline and known region history; no fraud indicators."
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "Policy 1 & Section 6: Assessed fraud probability <= 0.15 with multi-hop graph corroboration."
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Policy 1 & Section 6: Evidence confirms consistent customer baseline and known region history; no fraud indicators."
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "Policy 1 & Section 6: Assessed fraud probability <= 0.15 with multi-hop graph corroboration."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "Policy 3a: Case is resolved as legitimate or exposure does not meet SAR regulatory thresholds without syndicate link.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "sufficient_evidence",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.9
+}

@@ -1,0 +1,128 @@
+{
+  "case_id": "HHG-018",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.85,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3491361"
+    ],
+    "first_suspicious_txn_id": "3491361",
+    "connected_card_ids": [
+      "C02354-K2"
+    ],
+    "connected_device_profiles": [],
+    "exposure_usd": 39.08,
+    "evidence": [
+      {
+        "claim": "Transaction 3491361 occurred on 2016-11-27 13:41:26 for $39.08 via in_person channel in billing region 126.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3491361)",
+        "entity_ids": [
+          "3491361",
+          "126"
+        ]
+      },
+      {
+        "claim": "Customer C02354 has 7091 lifetime transactions with average spend of $141.15. Target amount $39.08 is within normal spending baseline (z-score -0.47).",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3491361)",
+        "entity_ids": [
+          "C02354"
+        ]
+      },
+      {
+        "claim": "Billing region 126 has 686 prior visits (9.7% of history) in customer's profile.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3491361)",
+        "entity_ids": [
+          "126"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0631",
+      "CC-2187",
+      "CC-5558",
+      "CC-2432",
+      "CC-3634",
+      "CC-4942",
+      "HHG-018",
+      "CC-2589",
+      "CC-3537",
+      "CC-0405",
+      "CC-4070",
+      "CC-0454",
+      "CC-0255",
+      "CC-4721",
+      "CC-3899",
+      "CC-1699",
+      "CC-3085",
+      "CC-1450",
+      "CC-5441",
+      "CC-4436",
+      "CC-2051"
+    ],
+    "summary": "Investigation for transaction 3491361 ($39.08) on customer C02354 identified pattern out_of_region_use with fraud probability 0.85. Total exposure is $39.08. Card blocked under policy guidelines and internal case logged.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-018"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 1,
+      "assumed_response": "SIMULATED / ASSUMED (not in dataset): Cardholder denies authorizing the flagged transaction."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern out_of_region_use; exposure $39.08 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern out_of_region_use; exposure $39.08 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "Policy 3a: Case is resolved as legitimate or exposure does not meet SAR regulatory thresholds without syndicate link.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "sufficient_evidence",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 4.86
+}

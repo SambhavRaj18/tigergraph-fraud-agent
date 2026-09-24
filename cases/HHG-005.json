@@ -1,0 +1,101 @@
+{
+  "case_id": "HHG-005",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.35,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [
+      "C02923-K1"
+    ],
+    "connected_device_profiles": [
+      "iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768"
+    ],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Transaction 3523199 occurred on 2016-12-07 21:38:37 for $100.07 via online channel in billing region 330.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3523199)",
+        "entity_ids": [
+          "3523199",
+          "330"
+        ]
+      },
+      {
+        "claim": "Customer C02923 has 92 lifetime transactions with average spend of $176.02. Target amount $100.07 is within normal spending baseline (z-score -0.33).",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3523199)",
+        "entity_ids": [
+          "C02923"
+        ]
+      },
+      {
+        "claim": "Billing region 330 has 87 prior visits (94.6% of history) in customer's profile.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3523199)",
+        "entity_ids": [
+          "330"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "HHG-005",
+      "CC-2857",
+      "CC-2717",
+      "CC-2400"
+    ],
+    "summary": "Investigation for transaction 3523199 ($100.07) on customer C02923 identified pattern none with fraud probability 0.35. Total exposure is $0.00. Card blocked under policy guidelines and internal case logged.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-005"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 1,
+      "assumed_response": "SIMULATED / ASSUMED (not in dataset): Cardholder confirms authorizing transaction."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "Policy R1: Probability 0.35 < 0.70 rests on single trigger signal; verify with cardholder before blocking."
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "Policy 1 & R4: Card stays active under raised 72h monitoring sensitivity pending cardholder response."
+      }
+    ],
+    "final": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "Policy R1: Probability 0.35 < 0.70 rests on single trigger signal; verify with cardholder before blocking."
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "Policy 1 & R4: Card stays active under raised 72h monitoring sensitivity pending cardholder response."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "Policy 3a: Case is resolved as legitimate or exposure does not meet SAR regulatory thresholds without syndicate link.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "sufficient_evidence",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.59
+}

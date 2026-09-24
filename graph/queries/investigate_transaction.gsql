@@ -1,0 +1,86 @@
+USE GRAPH FraudInvestigation
+
+DROP QUERY investigate_transaction
+
+CREATE QUERY investigate_transaction(VERTEX<Transaction> target_txn) FOR GRAPH FraudInvestigation {
+    /*
+      ==========================================================================
+      Investigation Query for Flagged Fraud Transactions (Benchmark HHG-001)
+      ==========================================================================
+      Retrieves comprehensive multi-hop evidence starting from target_txn:
+      1. Target Transaction Details
+      2. Customer Identity (via PERFORMED_BY)
+      3. Direct Card (via TRANSACTION_OF where mapped)
+      4. Device Profile (via FROM_DEVICE)
+      5. Purchaser Email Domain (via PURCHASER_EMAIL)
+      6. Recipient Email Domain (via RECIPIENT_EMAIL)
+      7. Billing Region (via BILLED_IN)
+      8. Temporal NEXT Sequence (via NEXT)
+      9. Customer's Cards Owned (via OWNS)
+      10. Customer's Entire Transaction History (via PERFORMED)
+      11. Device Sharing across other Customers (via DEVICE_OF -> PERFORMED_BY)
+      12. Related Historical Closed Cases (via ON_CARD, CONNECTED_TO, INVOLVES)
+    */
+
+    SetAccum<VERTEX<Customer>> @@target_cust_set;
+    SetAccum<VERTEX<Card>> @@all_cards;
+    SetAccum<VERTEX<Transaction>> @@all_txns;
+    SetAccum<VERTEX<ClosedCase>> @@related_closed_cases;
+
+    Start = { target_txn };
+
+    // 1. Direct 1-hop connections from Target Transaction
+    T_Cust = SELECT c FROM Start:s -(PERFORMED_BY:e)-> Customer:c
+             ACCUM @@target_cust_set += c;
+
+    T_Card = SELECT cd FROM Start:s -(TRANSACTION_OF:e)-> Card:cd
+             ACCUM @@all_cards += cd;
+
+    T_Dev = SELECT d FROM Start:s -(FROM_DEVICE:e)-> DeviceProfile:d;
+    T_PEmail = SELECT em FROM Start:s -(PURCHASER_EMAIL:e)-> EmailDomain:em;
+    T_REmail = SELECT rem FROM Start:s -(RECIPIENT_EMAIL:e)-> EmailDomain:rem;
+    T_Region = SELECT reg FROM Start:s -(BILLED_IN:e)-> BillingRegion:reg;
+    T_Next = SELECT n FROM Start:s -(NEXT:e)-> Transaction:n;
+
+    // 2. Customer Activity & Cards
+    Cust_Cards = SELECT cd FROM T_Cust:c -(OWNS:e)-> Card:cd
+                 ACCUM @@all_cards += cd;
+
+    Cust_Txns = SELECT t FROM T_Cust:c -(PERFORMED:e)-> Transaction:t
+                ACCUM @@all_txns += t;
+
+    // 3. Device Sharing (Co-occurrence / Syndicate Signals)
+    Dev_Txns = SELECT t FROM T_Dev:d -(DEVICE_OF:e)-> Transaction:t LIMIT 50;
+    Dev_Custs = SELECT c FROM Dev_Txns:t -(PERFORMED_BY:e)-> Customer:c
+                WHERE NOT @@target_cust_set.contains(c);
+
+    // 4. Historical Closed Cases
+    CC_Set = { ClosedCase.* };
+    Card_Cases = SELECT cc FROM CC_Set:cc -(ON_CARD:e)-> Card:cd
+                 WHERE @@all_cards.contains(cd)
+                 ACCUM @@related_closed_cases += cc;
+
+    Conn_Cases = SELECT cc FROM CC_Set:cc -(CONNECTED_TO:e)-> Card:cd
+                 WHERE @@all_cards.contains(cd)
+                 ACCUM @@related_closed_cases += cc;
+
+    Txn_Cases = SELECT cc FROM CC_Set:cc -(INVOLVES:e)-> Transaction:t
+                WHERE @@all_txns.contains(t)
+                ACCUM @@related_closed_cases += cc;
+
+    // 5. Output Structured Evidence
+    PRINT target_txn;
+    PRINT T_Cust AS customer;
+    PRINT T_Card AS direct_card;
+    PRINT T_Dev AS device_profile;
+    PRINT T_PEmail AS purchaser_email_domain;
+    PRINT T_REmail AS recipient_email_domain;
+    PRINT T_Region AS billing_region;
+    PRINT Cust_Cards AS customer_cards;
+    PRINT Cust_Txns AS customer_transactions;
+    PRINT T_Next AS next_transactions;
+    PRINT Dev_Custs AS other_customers_sharing_device;
+    PRINT @@related_closed_cases AS related_closed_cases;
+}
+
+INSTALL QUERY investigate_transaction

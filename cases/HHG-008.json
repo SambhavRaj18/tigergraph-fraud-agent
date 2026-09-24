@@ -1,0 +1,162 @@
+{
+  "case_id": "HHG-008",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.88,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3555638",
+      "3555768",
+      "3556719",
+      "3557118",
+      "3557979",
+      "3557987",
+      "3558054",
+      "3558907"
+    ],
+    "first_suspicious_txn_id": "3555638",
+    "connected_card_ids": [
+      "C13171-K2"
+    ],
+    "connected_device_profiles": [
+      " |  | chrome 66.0 | "
+    ],
+    "exposure_usd": 284.65,
+    "evidence": [
+      {
+        "claim": "Transaction 3558054 occurred on 2016-12-19 22:08:56 for $55.68 via online channel in billing region .",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3558054)",
+        "entity_ids": [
+          "3558054",
+          ""
+        ]
+      },
+      {
+        "claim": "Customer C13171 has 928 lifetime transactions with average spend of $54.27. Target amount $55.68 is within normal spending baseline (z-score 0.03).",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3558054)",
+        "entity_ids": [
+          "C13171"
+        ]
+      },
+      {
+        "claim": "Billing region  has 0 prior visits (0.0% of history) in customer's profile.",
+        "source": "graph",
+        "ref": "query:investigate_transaction(target_txn=3558054)",
+        "entity_ids": [
+          ""
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4819",
+      "CC-3728",
+      "CC-3928",
+      "HHG-008",
+      "CC-1925",
+      "CC-0056",
+      "CC-1715",
+      "CC-2454",
+      "CC-1293",
+      "CC-3079",
+      "CC-2244",
+      "CC-3422",
+      "CC-5010",
+      "CC-4485",
+      "CC-4163",
+      "CC-0772",
+      "CC-2059",
+      "CC-0467",
+      "CC-3566",
+      "CC-2716"
+    ],
+    "summary": "Investigation for transaction 3558054 ($55.68) on customer C13171 identified pattern card_not_present_new_device with fraud probability 0.88. Total exposure is $284.65. Card blocked under policy guidelines and internal case logged.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-008"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 1,
+      "assumed_response": "SIMULATED / ASSUMED (not in dataset): Cardholder denies authorizing the flagged transaction."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern card_not_present_new_device; exposure $284.65 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Policy 3a: Regulatory SAR filing required due to exposure > $1,000 or shared device ring."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "Policy R6: Unusual device profile shared across 26 other cardholders placed under monitoring."
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "Policy 1: High fraud probability pattern detected."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "Policy 1 & 2: Confirmed fraud pattern card_not_present_new_device; exposure $284.65 requires L1 approval."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Policy 3a: Internal fraud case opened for documented fraud pattern."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Policy 3a: Regulatory SAR filing required due to exposure > $1,000 or shared device ring."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "Policy R6: Unusual device profile shared across 26 other cardholders placed under monitoring."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "Policy 3a & R2: Confirmed fraud with regulatory reporting trigger.",
+    "narrative": "Between 2016-12-18 and 2016-12-20, card C13171-K2 belonging to customer C13171 was used for 8 unauthorized online transactions totaling $284.65 in billing region . The activity was inconsistent with the cardholder's historical profile. Pattern matches card_not_present_new_device. Total unauthorized exposure: $284.65. Card was blocked and internal case logged.",
+    "subjects": [
+      "C13171",
+      "C13171-K2"
+    ],
+    "total_amount_usd": 284.65,
+    "activity_dates": [
+      "2016-12-18",
+      "2016-12-20"
+    ]
+  },
+  "stop_reason": "sufficient_evidence",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.78
+}
