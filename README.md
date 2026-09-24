@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Project Pitch:**  
-> The **Autonomous Fraud Investigation Agent** is an enterprise-grade fraud investigation system that pairs **TigerGraph Savanna Cloud** with an **Agentic LLM Layer (via Model Context Protocol)** and an authoritative **Deterministic Policy Decision Engine**. Operating over 590k+ transactions and 5.5k+ historical cases, the agent autonomously traverses multi-hop graph subgraphs, evaluates behavioral baselines, detects multi-transaction burst episodes, enforces strict bank policy rules (R1–R10), and synthesizes publication-ready FinCEN Suspicious Activity Reports (SARs) with 100% factual provenance.
+> The **Autonomous Fraud Investigation Agent** is a policy-constrained agentic fraud investigation system that pairs **TigerGraph Savanna Cloud** with an **Agentic LLM Layer (via Model Context Protocol)** and an authoritative **Deterministic Policy Decision Engine**. Operating over 590k+ transactions and 5.5k+ historical cases, the agent traverses multi-hop graph subgraphs, evaluates behavioral baselines, detects multi-transaction burst episodes, enforces strict bank policy rules (R1–R10), and synthesizes policy-driven SAR narratives with explicit evidence provenance and simulated-evidence labeling.
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## 🧠 Why This Is Agentic
 
-Rather than running a monolithic script or relying on an unconstrained LLM, the investigation executes as an **autonomous, stateful loop**:
+Rather than running a monolithic script or relying on an unconstrained LLM, the investigation executes as a **policy-constrained agentic, stateful loop**:
 
 ```
 Case Trigger (risk score, customer dispute, analyst request)
@@ -156,14 +156,14 @@ Clear separation of concerns guarantees explainability, compliance, and zero hal
 ## ⚡ Quick Start & Reproducibility
 
 ### 1. Installation & Environment Setup
-Clone repository and install minimal dependencies from [`requirements.txt`](file:///d:/HHHGOA/tigergraph-fraud-agent/requirements.txt):
+Clone repository and install minimal dependencies from [requirements.txt](requirements.txt):
 ```bash
 git clone https://github.com/SambhavRaj18/tigergraph-fraud-agent.git
 cd tigergraph-fraud-agent
 pip install -r requirements.txt
 ```
 
-Configure credentials from template (see [`.env.example`](file:///d:/HHHGOA/tigergraph-fraud-agent/.env.example)):
+Configure credentials from template (see [.env.example](.env.example)):
 ```bash
 cp .env.example .env
 # Fill in TG_HOST, TG_SECRET, TG_TOKEN, and optional LLM API keys
