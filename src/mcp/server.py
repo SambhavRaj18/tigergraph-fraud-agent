@@ -23,8 +23,8 @@ mcp_server = MCPServer("tigergraph-fraud-mcp")
 
 # Initialize graph client & data sources
 _tg_client = TigerGraphClient()
-_CASE_PACK_PATH = os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/data/raw/case_pack.csv")
-_CLOSED_CASES_PATH = os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/data/raw/closed_cases_history.csv")
+_CASE_PACK_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "case_pack.csv")
+_CLOSED_CASES_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "closed_cases_history.csv")
 
 _df_cases = pd.read_csv(_CASE_PACK_PATH) if os.path.exists(_CASE_PACK_PATH) else pd.DataFrame()
 _df_closed = pd.read_csv(_CLOSED_CASES_PATH) if os.path.exists(_CLOSED_CASES_PATH) else pd.DataFrame()

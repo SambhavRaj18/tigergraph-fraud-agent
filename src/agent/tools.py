@@ -11,8 +11,9 @@ from src.graph_client import TigerGraphClient
 from src.analysis.evidence_analyzer import FraudEvidenceAnalyzer
 from src.policy.decision_engine import PolicyDecisionEngine
 
-CASE_PACK_PATH = os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/data/raw/case_pack.csv")
-CLOSED_CASES_PATH = os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/data/raw/closed_cases_history.csv")
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+CASE_PACK_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "case_pack.csv")
+CLOSED_CASES_PATH = os.path.join(PROJECT_ROOT, "data", "raw", "closed_cases_history.csv")
 
 POLICY_RULES_DOCS = {
     "R1": "Transaction amount <= $5.00: ALLOW_TRANSACTION / CLOSE_NO_FRAUD unless card_testing sequence detected.",

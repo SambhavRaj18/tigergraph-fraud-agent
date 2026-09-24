@@ -18,7 +18,8 @@ logger = logging.getLogger("MCPClient")
 
 class TigerGraphMCPClient:
     def __init__(self, server_script_path: Optional[str] = None):
-        self.server_script_path = server_script_path or os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/src/mcp/server.py")
+        default_server = os.path.abspath(os.path.join(os.path.dirname(__file__), "server.py"))
+        self.server_script_path = server_script_path or default_server
         self.python_exe = sys.executable
 
     def _get_server_params(self) -> StdioServerParameters:

@@ -21,6 +21,16 @@ st.set_page_config(
 
 load_dotenv()
 
+# Propagate Streamlit Cloud secrets to os.environ if present
+try:
+    if hasattr(st, "secrets"):
+        for _k in ["TG_HOST", "TG_SECRET", "TG_GRAPHNAME", "TG_USERNAME", "TG_PASSWORD", "GEMINI_API_KEY", "OPENAI_API_KEY"]:
+            if _k in st.secrets and _k not in os.environ:
+                os.environ[_k] = str(st.secrets[_k])
+except Exception:
+    pass
+
+
 # Professional Financial Fraud / SOC Analyst Console Theme
 st.markdown("""
 <style>
@@ -413,25 +423,34 @@ st.sidebar.link_button("🌐 Open Savanna GraphStudio", f"{tg_host}/#/", use_con
 live_result = None
 if run_live_btn:
     with st.status(f"Executing Agentic Investigation for {selected_case_id}...", expanded=True) as status_container:
-        st.write("⚙️ Initializing agent and executing investigation loop against TigerGraph Savanna Cloud...")
-        
-        from src.agent.investigation_agent import FraudInvestigationAgent
-        agent = FraudInvestigationAgent()
-        
-        t_start = time.time()
-        # Real execution of existing validated agent
-        agent_output = agent.investigate_case(selected_case_id)
-        exec_time = time.time() - t_start
-        
-        st.write("✓ Multi-hop TigerGraph investigation query executed")
-        st.write("✓ Customer spending baseline, Z-score & burst episodes computed")
-        st.write("✓ Historical case memory queried (5,565 precedents)")
-        st.write("✓ Policy rules R1–R10 evaluated")
-        st.write("✓ Case memory vertex persisted to TigerGraph")
-        
-        status_container.update(label=f"✓ Live Agent Execution Complete for {selected_case_id} ({exec_time:.2f}s)", state="complete", expanded=False)
-        st.session_state[f"live_result_{selected_case_id}"] = agent_output
-        live_result = agent_output
+        try:
+            st.write("⚙️ Initializing agent and executing investigation loop against TigerGraph Savanna Cloud...")
+            
+            from src.agent.investigation_agent import FraudInvestigationAgent
+            agent = FraudInvestigationAgent()
+            
+            t_start = time.time()
+            # Real execution of existing validated agent
+            agent_output = agent.investigate_case(selected_case_id)
+            exec_time = time.time() - t_start
+            
+            st.write("✓ Multi-hop TigerGraph investigation query executed")
+            st.write("✓ Customer spending baseline, Z-score & burst episodes computed")
+            st.write("✓ Historical case memory queried (5,565 precedents)")
+            st.write("✓ Policy rules R1–R10 evaluated")
+            st.write("✓ Case memory vertex persisted to TigerGraph")
+            
+            status_container.update(label=f"✓ Live Agent Execution Complete for {selected_case_id} ({exec_time:.2f}s)", state="complete", expanded=False)
+            st.session_state[f"live_result_{selected_case_id}"] = agent_output
+            live_result = agent_output
+        except ValueError as e:
+            status_container.update(label=f"❌ Live Execution Halted: {str(e)}", state="error", expanded=True)
+            st.error(f"**Configuration Notice:** {str(e)}\n\n"
+                     "When running on Streamlit Community Cloud, please configure `TG_HOST` and `TG_SECRET` in **App Settings → Secrets**.")
+        except Exception as e:
+            status_container.update(label=f"❌ Live Execution Error: {str(e)}", state="error", expanded=True)
+            st.error(f"**Investigation Error:** {str(e)}")
+
 
 # Determine active display data
 if f"live_result_{selected_case_id}" in st.session_state:

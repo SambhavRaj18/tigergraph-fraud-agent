@@ -2,7 +2,7 @@
 title: Building an Agentic Fraud Investigation Agent with TigerGraph, MCP, and GraphRAG
 published: true
 description: How we built a policy-constrained fraud investigation system combining TigerGraph multi-hop retrieval, MCP stdio tools, deterministic banking policy rules, and persistent graph case memory.
-tags: ai, machinelearning, tigergraph, graphdatabase, agenticai
+tags: ai, tigergraph, graphdatabase, machinelearning
 canonical_url: https://github.com/SambhavRaj18/tigergraph-fraud-agent
 ---
 

@@ -169,7 +169,15 @@ class OpenAIProvider(LLMProvider):
     """OpenAI API Provider."""
 
     def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o"):
-        self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+        st_openai_key = ""
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                st_openai_key = str(st.secrets.get("OPENAI_API_KEY", "") or "")
+        except Exception:
+            pass
+
+        self.api_key = api_key or os.environ.get("OPENAI_API_KEY") or st_openai_key
         self.model = os.environ.get("LLM_MODEL", model)
         self.fallback = DeterministicFallbackProvider()
         if not self.api_key:
@@ -292,15 +300,30 @@ class GeminiProvider(LLMProvider):
         strict: bool = True
     ):
         from dotenv import load_dotenv
-        load_dotenv("d:/HHHGOA/tigergraph-fraud-agent/.env")
-        self.api_key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        local_env = os.path.join(os.getcwd(), ".env")
+        if os.path.exists(local_env):
+            load_dotenv(local_env, override=False)
+        else:
+            repo_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
+            if os.path.exists(repo_env):
+                load_dotenv(repo_env, override=False)
+
+        st_gemini_key = ""
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                st_gemini_key = str(st.secrets.get("GEMINI_API_KEY", st.secrets.get("GOOGLE_API_KEY", "")) or "")
+        except Exception:
+            pass
+
+        self.api_key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or st_gemini_key
         self.model = os.environ.get("LLM_MODEL", model)
         self.strict = strict
         self.real_api_calls = 0
         self.fallback = DeterministicFallbackProvider()
         if not self.api_key:
             if self.strict:
-                logger.error("GEMINI_API_KEY is not set in environment or .env file.")
+                logger.error("GEMINI_API_KEY is not set in environment, .env file, or Streamlit Cloud Secrets.")
             else:
                 logger.warning("GEMINI_API_KEY not found; will fallback to DeterministicFallbackProvider.")
 

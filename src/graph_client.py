@@ -14,17 +14,39 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class TigerGraphClient:
     def __init__(self, env_path: Optional[str] = None):
-        if env_path is None:
-            env_path = os.path.abspath("d:/HHHGOA/tigergraph-fraud-agent/.env")
-        load_dotenv(env_path, override=True)
-        
-        self.host = os.getenv("TG_HOST", "").rstrip("/")
-        self.secret = os.getenv("TG_SECRET", "").strip()
-        self.graph = os.getenv("TG_GRAPHNAME", os.getenv("TG_GRAPH", "FraudInvestigation")).strip()
+        if env_path:
+            if os.path.exists(env_path):
+                load_dotenv(env_path, override=True)
+        else:
+            # Check local working directory or relative project root .env
+            local_env = os.path.join(os.getcwd(), ".env")
+            if os.path.exists(local_env):
+                load_dotenv(local_env, override=False)
+            else:
+                repo_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+                if os.path.exists(repo_env):
+                    load_dotenv(repo_env, override=False)
+
+        # Also check Streamlit Cloud secrets if available
+        st_host = ""
+        st_secret = ""
+        st_graph = ""
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                st_host = str(st.secrets.get("TG_HOST", "") or "")
+                st_secret = str(st.secrets.get("TG_SECRET", "") or "")
+                st_graph = str(st.secrets.get("TG_GRAPHNAME", st.secrets.get("TG_GRAPH", "")) or "")
+        except Exception:
+            pass
+
+        self.host = (os.getenv("TG_HOST", "") or st_host).strip().rstrip("/")
+        self.secret = (os.getenv("TG_SECRET", "") or st_secret).strip()
+        self.graph = (os.getenv("TG_GRAPHNAME", os.getenv("TG_GRAPH", "")) or st_graph or "FraudInvestigation").strip()
         self.token: Optional[str] = None
-        
+
         if not self.host or not self.secret:
-            raise ValueError("TG_HOST or TG_SECRET missing from environment!")
+            raise ValueError("TG_HOST or TG_SECRET missing from environment! Please configure TG_HOST and TG_SECRET in your .env file or Streamlit Cloud Secrets.")
 
     def get_token(self) -> str:
         """Fetch or refresh JWT authentication token."""
