@@ -66,10 +66,29 @@ st.markdown("""
         align-items: center;
         gap: 6px;
     }
+    .status-badge-unverified {
+        background-color: rgba(245, 158, 11, 0.12);
+        color: #FBBF24;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
     .status-dot-green {
         width: 7px;
         height: 7px;
         background-color: #10B981;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .status-dot-amber {
+        width: 7px;
+        height: 7px;
+        background-color: #F59E0B;
         border-radius: 50%;
         display: inline-block;
     }
@@ -393,11 +412,9 @@ st.sidebar.link_button("🌐 Open Savanna GraphStudio", f"{tg_host}/#/", use_con
 # LIVE INVESTIGATION ORCHESTRATION
 live_result = None
 if run_live_btn:
-    with st.status(f"Investigating {selected_case_id} via Autonomous Agent...", expanded=True) as status_container:
-        st.write("📥 **Step 1/6: Ingesting Alert Trigger** — Retrieved flagged transaction & customer profile.")
-        time.sleep(0.3)
+    with st.status(f"Executing Agentic Investigation for {selected_case_id}...", expanded=True) as status_container:
+        st.write("⚙️ Initializing agent and executing investigation loop against TigerGraph Savanna Cloud...")
         
-        st.write("🌐 **Step 2/6: Executing GSQL Multi-Hop Graph Traversal** — Querying TigerGraph Savanna Cloud...")
         from src.agent.investigation_agent import FraudInvestigationAgent
         agent = FraudInvestigationAgent()
         
@@ -406,15 +423,13 @@ if run_live_btn:
         agent_output = agent.investigate_case(selected_case_id)
         exec_time = time.time() - t_start
         
-        st.write("📊 **Step 3/6: Analyzing Behavioral Evidence** — Computed spending baseline, Z-score, and burst episodes.")
-        time.sleep(0.2)
-        st.write("🧠 **Step 4/6: Querying Graph Case Memory** — Evaluated 5,565 historical closed case precedents.")
-        time.sleep(0.2)
-        st.write("⚡ **Step 5/6: Evaluating Deterministic Policy Rules** — Enforced Rules R1–R10 and approval routing.")
-        time.sleep(0.2)
-        st.write("💾 **Step 6/6: Persisting Case to TigerGraph** — Concluded investigation & wrote Case vertex.")
+        st.write("✓ Multi-hop TigerGraph investigation query executed")
+        st.write("✓ Customer spending baseline, Z-score & burst episodes computed")
+        st.write("✓ Historical case memory queried (5,565 precedents)")
+        st.write("✓ Policy rules R1–R10 evaluated")
+        st.write("✓ Case memory vertex persisted to TigerGraph")
         
-        status_container.update(label=f"✓ Live Investigation Complete for {selected_case_id} ({exec_time:.2f}s)", state="complete", expanded=False)
+        status_container.update(label=f"✓ Live Agent Execution Complete for {selected_case_id} ({exec_time:.2f}s)", state="complete", expanded=False)
         st.session_state[f"live_result_{selected_case_id}"] = agent_output
         live_result = agent_output
 
@@ -439,14 +454,20 @@ latency = case_data.get("latency_s", 0.0)
 tool_calls_count = case_data.get("tool_calls", 0)
 
 # TOP PRODUCT HEADER
+header_status_badge = (
+    '<div class="status-badge-online"><span class="status-dot-green"></span> TigerGraph Savanna Connected</div>'
+    if is_tg_connected else
+    '<div class="status-badge-unverified"><span class="status-dot-amber"></span> TigerGraph Connection Unverified</div>'
+)
+
 st.markdown(f"""
 <div class="soc-header">
     <div>
         <div class="soc-title">TigerGraph Fraud Investigation Agent</div>
-        <div class="soc-subtitle">Autonomous GraphRAG & Policy-Constrained Next-Best-Action Console</div>
+        <div class="soc-subtitle">Agentic Investigation & Next-Best-Action Console</div>
     </div>
     <div>
-        <div class="status-badge-online"><span class="status-dot-green"></span> TigerGraph Savanna Cloud Active</div>
+        {header_status_badge}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -707,16 +728,17 @@ with tab_graph:
     
     col_g1, col_g2 = st.columns([1, 1])
     with col_g1:
-        st.markdown("#### Structural Graph Entity Model")
+        st.markdown("#### Structural Graph Entity Model (Deployed Savanna Schema)")
         st.markdown("""
         ```
-        Transaction (Target & Lifetime)
-           ├── PERFORMED_WITH ── Card
-           │                      └── OWNS_CARD ── Customer (Historical Baseline)
-           ├── TRANSACTED_FROM ── Device (Browser/OS Profile Fingerprint)
-           ├── BILLED_IN ────── BillingRegion (Geographic Anomaly Detection)
-           ├── NEXT ─────────── Transaction (Temporal Sequence Edge)
-           └── ASSOCIATED_WITH ── Case (Persistent Institutional Memory)
+        Customer
+           ├── OWNS (OWNED_BY) ──────── Card
+           │                            └── MADE (TRANSACTION_OF) ── Transaction
+           └── PERFORMED (PERFORMED_BY) ──────────────────────────── Transaction
+                                                                       ├── FROM_DEVICE (DEVICE_OF) ─ DeviceProfile
+                                                                       ├── BILLED_IN (REGION_OF) ─── BillingRegion
+                                                                       ├── NEXT (ts_diff) ────────── Transaction (Temporal Chain)
+                                                                       └── INVOLVES / ON_CARD ────── ClosedCase (Case Memory)
         ```
         """)
         
