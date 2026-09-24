@@ -169,25 +169,31 @@ cp .env.example .env
 # Fill in TG_HOST, TG_SECRET, TG_TOKEN, and optional LLM API keys
 ```
 
-### 2. Run Comprehensive 6-Stage Validation
+### 2. Launch Streamlit Analyst Dashboard
+Start the interactive UI dashboard to review benchmark cases, multi-hop graph evidence, and SAR filings:
+```bash
+streamlit run app.py
+```
+
+### 3. Run Comprehensive 6-Stage Validation
 Verify all 20 deliverable JSON files against schema, provenance, policy alignment, and referential integrity:
 ```bash
 python -m src.benchmark.validate_final_deliverables
 ```
 
-### 3. Run Agent Unit Test Suite
+### 4. Run Agent Unit Test Suite
 Execute unit tests for tool queuing, policy boundaries, and case episode handling:
 ```bash
 python -m unittest src.agent.test_agent_suite
 ```
 
-### 4. Run MCP Regression Suite
+### 5. Run MCP Regression Suite
 Verify real TigerGraph MCP client execution over `stdio` transport:
 ```bash
 python -m src.benchmark.regression_test
 ```
 
-### 5. Reproduce All 20 Cases
+### 6. Reproduce All 20 Cases
 Regenerate all 20 benchmark case JSON deliverables from scratch:
 ```bash
 python -m src.benchmark.run_benchmark
@@ -203,6 +209,7 @@ tigergraph-fraud-agent/
 ├── .gitignore                            # Secret & large-dataset protection rules
 ├── README.md                             # Architectural, benchmark & reproducibility guide
 ├── requirements.txt                      # Minimal production dependency manifest
+├── app.py                                # Streamlit Analyst Investigation Dashboard
 ├── cases/                                # 20 Official Benchmark JSON Deliverables
 │   ├── HHG-001.json
 │   ├── ...
