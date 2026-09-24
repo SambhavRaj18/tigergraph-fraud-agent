@@ -1,0 +1,41 @@
+# Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.token
+
+# Python & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Large Datasets (>100MB rejected by GitHub)
+data/raw/transactions.csv
+data/raw/identity.csv
+data/raw/closed_cases_history.csv
+*.csv.gz
+*.tar.gz
+*.zip
+
+# Logs
+*.log
+logs/
+
+# OS / IDE artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
