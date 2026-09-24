@@ -321,6 +321,8 @@ class GeminiProvider(LLMProvider):
         self.strict = strict
         self.real_api_calls = 0
         self.fallback = DeterministicFallbackProvider()
+
+
         if not self.api_key:
             if self.strict:
                 logger.error("GEMINI_API_KEY is not set in environment, .env file, or Streamlit Cloud Secrets.")

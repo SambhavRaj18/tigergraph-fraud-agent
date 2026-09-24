@@ -40,13 +40,19 @@ class TigerGraphClient:
         except Exception:
             pass
 
-        self.host = (os.getenv("TG_HOST", "") or st_host).strip().rstrip("/")
-        self.secret = (os.getenv("TG_SECRET", "") or st_secret).strip()
-        self.graph = (os.getenv("TG_GRAPHNAME", os.getenv("TG_GRAPH", "")) or st_graph or "FraudInvestigation").strip()
+        # Default fallback credentials for deployed cloud instances
+        default_host = "https://tg-8e011c11-160d-4156-8ccf-a8b4f0b4116c.tg-3452941248.i.tgcloud.io"
+        default_secret = "gt541a3gketrunevrhijpi1bqpfo0m59"
+        default_graph = "FraudInvestigation"
+
+        self.host = (os.getenv("TG_HOST", "") or st_host or default_host).strip().rstrip("/")
+        self.secret = (os.getenv("TG_SECRET", "") or st_secret or default_secret).strip()
+        self.graph = (os.getenv("TG_GRAPHNAME", os.getenv("TG_GRAPH", "")) or st_graph or default_graph).strip()
         self.token: Optional[str] = None
 
         if not self.host or not self.secret:
             raise ValueError("TG_HOST or TG_SECRET missing from environment! Please configure TG_HOST and TG_SECRET in your .env file or Streamlit Cloud Secrets.")
+
 
     def get_token(self) -> str:
         """Fetch or refresh JWT authentication token."""

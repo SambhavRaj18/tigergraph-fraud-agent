@@ -21,7 +21,7 @@ st.set_page_config(
 
 load_dotenv()
 
-# Propagate Streamlit Cloud secrets to os.environ if present
+# Propagate Streamlit Cloud secrets to os.environ if present, or set production fallbacks
 try:
     if hasattr(st, "secrets"):
         for _k in ["TG_HOST", "TG_SECRET", "TG_GRAPHNAME", "TG_USERNAME", "TG_PASSWORD", "GEMINI_API_KEY", "OPENAI_API_KEY"]:
@@ -29,6 +29,14 @@ try:
                 os.environ[_k] = str(st.secrets[_k])
 except Exception:
     pass
+
+if not os.getenv("TG_HOST"):
+    os.environ["TG_HOST"] = "https://tg-8e011c11-160d-4156-8ccf-a8b4f0b4116c.tg-3452941248.i.tgcloud.io"
+if not os.getenv("TG_SECRET"):
+    os.environ["TG_SECRET"] = "gt541a3gketrunevrhijpi1bqpfo0m59"
+if not os.getenv("TG_GRAPHNAME"):
+    os.environ["TG_GRAPHNAME"] = "FraudInvestigation"
+
 
 
 # Professional Financial Fraud / SOC Analyst Console Theme
